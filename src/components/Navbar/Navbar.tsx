@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useSession, signOut } from "next-auth/react";
 import { useCartStore } from "@/store/cart";
 import styles from "./Navbar.module.css";
 
@@ -15,8 +16,10 @@ const links = [
 
 export default function Navbar() {
     const pathname = usePathname();
+    const { data: session } = useSession();
     const [scrolled, setScrolled] = useState(false);
     const [mobileOpen, setMobileOpen] = useState(false);
+    const [userMenuOpen, setUserMenuOpen] = useState(false);
     const totalItems = useCartStore((s) => s.totalItems);
 
     useEffect(() => {
@@ -90,6 +93,58 @@ export default function Navbar() {
                             <span className={styles.cartCount}>{totalItems()}</span>
                         )}
                     </Link>
+
+                    {/* Auth */}
+                    {session?.user ? (
+                        <div className={styles.userMenu}>
+                            <button
+                                className={styles.userBtn}
+                                onClick={() => setUserMenuOpen(!userMenuOpen)}
+                            >
+                                <span className={styles.userAvatar}>
+                                    {session.user.name?.[0]?.toUpperCase() || "U"}
+                                </span>
+                            </button>
+                            {userMenuOpen && (
+                                <div className={styles.userDropdown}>
+                                    <div className={styles.userDropdownHeader}>
+                                        <span className={styles.userDropdownName}>
+                                            {session.user.name}
+                                        </span>
+                                        <span className={styles.userDropdownEmail}>
+                                            {session.user.email}
+                                        </span>
+                                    </div>
+                                    <div className={styles.userDropdownDivider} />
+                                    <Link
+                                        href="/profile"
+                                        className={styles.userDropdownItem}
+                                        onClick={() => setUserMenuOpen(false)}
+                                    >
+                                        Мой профиль
+                                    </Link>
+                                    <Link
+                                        href="/orders"
+                                        className={styles.userDropdownItem}
+                                        onClick={() => setUserMenuOpen(false)}
+                                    >
+                                        Мои заказы
+                                    </Link>
+                                    <div className={styles.userDropdownDivider} />
+                                    <button
+                                        className={styles.userDropdownItem}
+                                        onClick={() => signOut()}
+                                    >
+                                        Выйти
+                                    </button>
+                                </div>
+                            )}
+                        </div>
+                    ) : (
+                        <Link href="/login" className={styles.loginBtn}>
+                            Войти
+                        </Link>
+                    )}
 
                     {/* Mobile toggle */}
                     <button

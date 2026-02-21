@@ -160,6 +160,105 @@
     transition: all var(--transition-fast);
 }
 
+/* Login button */
+.loginBtn {
+    padding: 8px 20px;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    background: var(--bg-glass);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-full);
+    transition: all var(--transition-fast);
+}
+
+.loginBtn:hover {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #fff;
+}
+
+/* User menu */
+.userMenu {
+    position: relative;
+}
+
+.userBtn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+.userAvatar {
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--accent);
+    color: #fff;
+    font-size: 0.875rem;
+    font-weight: 700;
+    border-radius: var(--radius-full);
+    transition: box-shadow var(--transition-fast);
+}
+
+.userAvatar:hover {
+    box-shadow: 0 0 0 3px var(--accent-soft);
+}
+
+.userDropdown {
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    min-width: 220px;
+    background: var(--bg-card);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-md);
+    padding: var(--space-sm);
+    box-shadow: var(--shadow-lg);
+    z-index: 100;
+}
+
+.userDropdownHeader {
+    padding: var(--space-sm) var(--space-md);
+    display: flex;
+    flex-direction: column;
+}
+
+.userDropdownName {
+    font-size: 0.875rem;
+    font-weight: 600;
+}
+
+.userDropdownEmail {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+}
+
+.userDropdownDivider {
+    height: 1px;
+    background: var(--border-subtle);
+    margin: var(--space-xs) 0;
+}
+
+.userDropdownItem {
+    display: block;
+    width: 100%;
+    text-align: left;
+    padding: 10px var(--space-md);
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    border-radius: var(--radius-sm);
+    transition: all var(--transition-fast);
+}
+
+.userDropdownItem:hover {
+    background: var(--bg-glass);
+    color: var(--text-primary);
+}
+
 /* Mobile responsive */
 @media (max-width: 768px) {
     .navLinks {
