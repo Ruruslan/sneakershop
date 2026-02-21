@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useCartStore } from "@/store/cart";
@@ -8,6 +9,28 @@ import styles from "./page.module.css";
 export default function CartPage() {
     const { items, removeItem, updateQuantity, totalItems, totalPrice, clearCart } =
         useCartStore();
+    const [checkoutLoading, setCheckoutLoading] = useState(false);
+
+    const handleCheckout = async () => {
+        setCheckoutLoading(true);
+        try {
+            const res = await fetch("/api/checkout", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ items }),
+            });
+            const data = await res.json();
+            if (data.url) {
+                window.location.href = data.url;
+            } else {
+                alert(data.error || "Ошибка оформления заказа");
+                setCheckoutLoading(false);
+            }
+        } catch {
+            alert("Ошибка подключения к серверу");
+            setCheckoutLoading(false);
+        }
+    };
 
     const shipping = totalPrice() >= 10000 ? 0 : 590;
     const total = totalPrice() + shipping;
@@ -153,18 +176,24 @@ export default function CartPage() {
                             <span>{total.toLocaleString("ru-RU")} ₽</span>
                         </div>
 
-                        <button className={styles.checkoutBtn}>
-                            Оформить заказ
-                            <svg
-                                width="20"
-                                height="20"
-                                fill="none"
-                                stroke="currentColor"
-                                strokeWidth="2"
-                                viewBox="0 0 24 24"
-                            >
-                                <path d="m9 18 6-6-6-6" />
-                            </svg>
+                        <button
+                            className={styles.checkoutBtn}
+                            onClick={handleCheckout}
+                            disabled={checkoutLoading}
+                        >
+                            {checkoutLoading ? "Перенаправление..." : "Оформить заказ"}
+                            {!checkoutLoading && (
+                                <svg
+                                    width="20"
+                                    height="20"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    strokeWidth="2"
+                                    viewBox="0 0 24 24"
+                                >
+                                    <path d="m9 18 6-6-6-6" />
+                                </svg>
+                            )}
                         </button>
 
                         <div className={styles.secureNote}>
