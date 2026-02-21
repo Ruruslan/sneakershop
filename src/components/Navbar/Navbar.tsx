@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useCartStore } from "@/store/cart";
 import styles from "./Navbar.module.css";
 
 const links = [
@@ -16,6 +17,7 @@ export default function Navbar() {
     const pathname = usePathname();
     const [scrolled, setScrolled] = useState(false);
     const [mobileOpen, setMobileOpen] = useState(false);
+    const totalItems = useCartStore((s) => s.totalItems);
 
     useEffect(() => {
         const onScroll = () => setScrolled(window.scrollY > 20);
@@ -84,7 +86,9 @@ export default function Navbar() {
                             <path d="M3 6h18" />
                             <path d="M16 10a4 4 0 0 1-8 0" />
                         </svg>
-                        <span className={styles.cartCount}>0</span>
+                        {totalItems() > 0 && (
+                            <span className={styles.cartCount}>{totalItems()}</span>
+                        )}
                     </Link>
 
                     {/* Mobile toggle */}
