@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { stripe } from "@/lib/stripe";
+import { stripe, isStripeConfigured } from "@/lib/stripe";
 
 export async function POST(request: NextRequest) {
     try {
@@ -12,6 +12,16 @@ export async function POST(request: NextRequest) {
             );
         }
 
+        // ─── Demo mode: redirect to success page without Stripe ───
+        if (!isStripeConfigured || !stripe) {
+            const demoSessionId = `demo_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
+            const baseUrl = process.env.NEXTAUTH_URL || "http://localhost:3000";
+            return NextResponse.json({
+                url: `${baseUrl}/checkout/success?session_id=${demoSessionId}`,
+            });
+        }
+
+        // ─── Production: real Stripe Checkout ───
         const lineItems = items.map(
             (item: {
                 name: string;
@@ -29,7 +39,7 @@ export async function POST(request: NextRequest) {
                             ? [item.image]
                             : [`${process.env.NEXTAUTH_URL || "http://localhost:3000"}${item.image}`],
                     },
-                    unit_amount: Math.round(item.price * 100), // Stripe uses kopecks
+                    unit_amount: Math.round(item.price * 100),
                 },
                 quantity: item.quantity,
             })
